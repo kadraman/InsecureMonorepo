@@ -1,13 +1,13 @@
 import express, { Request, Response } from 'express';
-import * as bodyParser from 'body-parser';
-import * as cors from 'cors';
+import bodyParser from 'body-parser';
+import cors from 'cors';
 import Logger from '@packages/logging';
 import ConfigManager from '@packages/config';
 import AuthService from '@packages/auth';
-import * as sqlite3 from 'sqlite3';
-import * as xml2js from 'xml2js';
-import * as fs from 'fs';
-import * as path from 'path';
+import sqlite3 from 'sqlite3';
+import xml2js from 'xml2js';
+import fs from 'fs';
+import path from 'path';
 
 const app = express();
 const logger = new Logger('products-service');

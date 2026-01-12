@@ -1,11 +1,11 @@
 import express, { Request, Response } from 'express';
-import * as bodyParser from 'body-parser';
-import * as cors from 'cors';
+import bodyParser from 'body-parser';
+import cors from 'cors';
 import Logger from '@packages/logging';
 import ConfigManager from '@packages/config';
 import AuthService from '@packages/auth';
-import * as sqlite3 from 'sqlite3';
-import * as path from 'path';
+import sqlite3 from 'sqlite3';
+import path from 'path';
 import { exec } from 'child_process';
 
 const app = express();

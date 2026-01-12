@@ -1,10 +1,10 @@
 import express, { Request, Response } from 'express';
-import * as bodyParser from 'body-parser';
-import * as cors from 'cors';
+import bodyParser from 'body-parser';
+import cors from 'cors';
 import Logger from '@packages/logging';
 import ConfigManager from '@packages/config';
 import AuthService from '@packages/auth';
-import * as sqlite3 from 'sqlite3';
+import sqlite3 from 'sqlite3';
 import axios from 'axios';
 
 const app = express();

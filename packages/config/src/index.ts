@@ -1,7 +1,7 @@
-import * as fs from 'fs';
-import * as path from 'path';
-import * as yaml from 'js-yaml';
-import * as dotenv from 'dotenv';
+import fs from 'fs';
+import path from 'path';
+import yaml from 'js-yaml';
+import dotenv from 'dotenv';
 
 export interface Config {
   database: {

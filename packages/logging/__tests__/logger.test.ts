@@ -1,5 +1,5 @@
 import Logger from '../src/index';
-import * as fs from 'fs';
+import fs from 'fs';
 
 describe('Logger', () => {
   let logger: Logger;

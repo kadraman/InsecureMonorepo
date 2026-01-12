@@ -1,5 +1,5 @@
-import * as jwt from 'jsonwebtoken';
-import * as bcrypt from 'bcrypt';
+import jwt from 'jsonwebtoken';
+import bcrypt from 'bcrypt';
 
 // Vulnerability: Weak JWT secret
 const JWT_SECRET = 'secret123';

@@ -1,6 +1,6 @@
 import express, { Request, Response, NextFunction } from 'express';
-import * as bodyParser from 'body-parser';
-import * as cors from 'cors';
+import bodyParser from 'body-parser';
+import cors from 'cors';
 import rateLimit from 'express-rate-limit';
 import Logger from '@packages/logging';
 import ConfigManager from '@packages/config';
@@ -64,12 +64,12 @@ const authenticate = (req: Request, res: Response, next: NextFunction) => {
 const proxyRequest = async (serviceUrl: string, path: string, method: string, data?: any, headers?: any) => {
   try {
     const response = await axios({
-      method,
+      method: method as any,
       url: `${serviceUrl}${path}`,
       data,
       headers,
       // Vulnerability: Not validating SSL certificates
-      httpsAgent: { rejectUnauthorized: false }
+      httpsAgent: { rejectUnauthorized: false } as any
     });
     return response;
   } catch (error: any) {
@@ -158,7 +158,7 @@ app.post('/api/proxy', async (req: Request, res: Response) => {
   try {
     // Vulnerability: Making requests to arbitrary URLs
     const response = await axios({
-      method: method || 'GET',
+      method: (method || 'GET') as any,
       url,
       data
     });
