@@ -1,0 +1,28 @@
+{
+  "name": "insecure-monorepo",
+  "version": "1.0.0",
+  "description": "An insecure NodeJS microservices monorepo for application security testing scenarios",
+  "private": true,
+  "workspaces": [
+    "services/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "build": "npm run build --workspaces",
+    "test": "npm run test --workspaces --if-present",
+    "clean": "npm run clean --workspaces --if-present && rm -rf node_modules"
+  },
+  "keywords": [
+    "security",
+    "testing",
+    "vulnerabilities",
+    "monorepo",
+    "microservices"
+  ],
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/node": "^18.0.0",
+    "typescript": "^5.0.0"
+  }
+}
