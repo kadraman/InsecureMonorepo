@@ -1,6 +1,6 @@
 # Quick Start Guide
 
-Get the Insecure-Monorepo running in 5 minutes.
+Get the InsecureMonorepo running in 5 minutes.
 
 ⚠️ **WARNING: This code is intentionally vulnerable. Only run in isolated environments.**
 
@@ -14,8 +14,8 @@ Get the Insecure-Monorepo running in 5 minutes.
 
 ```bash
 # 1. Clone and install
-git clone https://github.com/kadraman/Insecure-Monorepo.git
-cd Insecure-Monorepo
+git clone https://github.com/kadraman/InsecureMonorepo.git
+cd InsecureMonorepo
 npm install
 
 # 2. Build everything
@@ -71,8 +71,8 @@ npm run dev
 
 ```bash
 # 1. Clone
-git clone https://github.com/kadraman/Insecure-Monorepo.git
-cd Insecure-Monorepo
+git clone https://github.com/kadraman/InsecureMonorepo.git
+cd InsecureMonorepo
 
 # 2. Start all services
 docker-compose up

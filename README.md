@@ -1,6 +1,7 @@
-# Insecure-Monorepo
+# InsecureMonorepo
 
-An intentionally vulnerable Node.js + TypeScript microservices monorepo for application security testing and demonstrations with GitHub Advanced Security, Fortify/OpenText, and other security scanning tools.
+An intentionally vulnerable Node.js + TypeScript microservices monorepo for application security testing and demonstrations 
+with tools such as OpenText Application Security, GitHub Advanced Security, and other security scanning tools.
 
 ⚠️ **WARNING**: This repository contains intentional security vulnerabilities. DO NOT use this code in production or expose it to the internet.
 
@@ -11,7 +12,7 @@ This monorepo contains multiple microservices and shared packages with deliberat
 ### Architecture
 
 ```
-insecure-monorepo/
+insecuremonorepo/
 ├── packages/              # Shared packages
 │   ├── logging/          # Logging utilities (with vulnerabilities)
 │   ├── config/           # Configuration management (with vulnerabilities)
@@ -82,8 +83,8 @@ This monorepo includes the following types of security vulnerabilities:
 
 1. Clone the repository:
 ```bash
-git clone https://github.com/kadraman/Insecure-Monorepo.git
-cd Insecure-Monorepo
+git clone https://github.com/kadraman/InsecureMonorepo.git
+cd InsecureMonorepo
 ```
 
 2. Install dependencies:

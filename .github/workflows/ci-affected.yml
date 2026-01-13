@@ -1,0 +1,145 @@
+name: "CI - Affected projects"
+
+on:
+  push:
+    branches: [ "main", "master", "feature/*", "copilot/*" ]
+  pull_request:
+    branches: [ "main", "master" ]
+
+jobs:
+  filter:
+    runs-on: ubuntu-latest
+    outputs:
+      packages_auth: ${{ steps.filter.outputs.packages_auth }}
+      packages_config: ${{ steps.filter.outputs.packages_config }}
+      packages_logging: ${{ steps.filter.outputs.packages_logging }}
+      services_api_gateway: ${{ steps.filter.outputs.services_api_gateway }}
+      services_orders: ${{ steps.filter.outputs.services_orders }}
+      services_products: ${{ steps.filter.outputs.services_products }}
+      services_users: ${{ steps.filter.outputs.services_users }}
+      root: ${{ steps.filter.outputs.root }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Detect changed paths
+        id: filter
+        uses: dorny/paths-filter@v2
+        with:
+          filters: |
+            packages_auth:
+              - 'packages/auth/**'
+            packages_config:
+              - 'packages/config/**'
+            packages_logging:
+              - 'packages/logging/**'
+            services_api_gateway:
+              - 'services/api-gateway/**'
+            services_orders:
+              - 'services/orders-service/**'
+            services_products:
+              - 'services/products-service/**'
+            services_users:
+              - 'services/users-service/**'
+            root:
+              - 'package.json'
+              - 'package-lock.json'
+              - 'package-lock-*.json'
+              - 'pnpm-lock.yaml'
+              - 'npm-shrinkwrap.json'
+              - 'tsconfig*.json'
+              - '.github/**'
+              - 'packages/*/package.json'
+              - 'services/*/package.json'
+
+  # Per-project jobs - run when the project changed, root changed, or on main/master branch
+  ci_packages_auth:
+    name: CI - packages/auth
+    needs: filter
+    runs-on: ubuntu-latest
+    if: |
+      needs.filter.outputs.packages_auth == 'true' || needs.filter.outputs.root == 'true' || github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master'
+    steps:
+      - name: Run CI composite action for packages/auth
+        uses: ./.github/actions/ci-project-action
+        with:
+          project_path: 'packages/auth'
+          node-version: '18'
+
+  ci_packages_config:
+    name: CI - packages/config
+    needs: filter
+    runs-on: ubuntu-latest
+    if: |
+      needs.filter.outputs.packages_config == 'true' || needs.filter.outputs.root == 'true' || github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master'
+    steps:
+      - name: Run CI composite action for packages/config
+        uses: ./.github/actions/ci-project-action
+        with:
+          project_path: 'packages/config'
+          node-version: '18'
+
+  ci_packages_logging:
+    name: CI - packages/logging
+    needs: filter
+    runs-on: ubuntu-latest
+    if: |
+      needs.filter.outputs.packages_logging == 'true' || needs.filter.outputs.root == 'true' || github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master'
+    steps:
+      - name: Run CI composite action for packages/logging
+        uses: ./.github/actions/ci-project-action
+        with:
+          project_path: 'packages/logging'
+          node-version: '18'
+
+  ci_services_api_gateway:
+    name: CI - services/api-gateway
+    needs: filter
+    runs-on: ubuntu-latest
+    if: |
+      needs.filter.outputs.services_api_gateway == 'true' || needs.filter.outputs.root == 'true' || github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master'
+    steps:
+      - name: Run CI composite action for services/api-gateway
+        uses: ./.github/actions/ci-project-action
+        with:
+          project_path: 'services/api-gateway'
+          node-version: '18'
+
+  ci_services_orders:
+    name: CI - services/orders-service
+    needs: filter
+    runs-on: ubuntu-latest
+    if: |
+      needs.filter.outputs.services_orders == 'true' || needs.filter.outputs.root == 'true' || github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master'
+    steps:
+      - name: Run CI composite action for services/orders-service
+        uses: ./.github/actions/ci-project-action
+        with:
+          project_path: 'services/orders-service'
+          node-version: '18'
+
+  ci_services_products:
+    name: CI - services/products-service
+    needs: filter
+    runs-on: ubuntu-latest
+    if: |
+      needs.filter.outputs.services_products == 'true' || needs.filter.outputs.root == 'true' || github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master'
+    steps:
+      - name: Run CI composite action for services/products-service
+        uses: ./.github/actions/ci-project-action
+        with:
+          project_path: 'services/products-service'
+          node-version: '18'
+
+  ci_services_users:
+    name: CI - services/users-service
+    needs: filter
+    runs-on: ubuntu-latest
+    if: |
+      needs.filter.outputs.services_users == 'true' || needs.filter.outputs.root == 'true' || github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master'
+    steps:
+      - name: Run CI composite action for services/users-service
+        uses: ./.github/actions/ci-project-action
+        with:
+          project_path: 'services/users-service'
+          node-version: '18'
