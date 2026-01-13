@@ -14,7 +14,11 @@
     "declarationMap": true,
     "sourceMap": true,
     "composite": true,
-    "moduleResolution": "node"
+    "moduleResolution": "node",
+    "baseUrl": ".",
+    "paths": {
+      "@packages/*": ["packages/*/src"]
+    }
   },
   "exclude": ["node_modules", "dist"]
 }
