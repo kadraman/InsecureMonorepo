@@ -32,11 +32,14 @@ runs:
 
     - name: Install dependencies (root)
       run: npm ci
+      shell: bash
 
     - name: Build (workspace preferred, fallback)
       run: |
         npm --workspace=${{ inputs.project_path }} run build --if-present || (cd ${{ inputs.project_path }} && npm ci && npm run build --if-present)
+      shell: bash
 
     - name: Test (workspace preferred, fallback)
       run: |
         npm --workspace=${{ inputs.project_path }} run test --if-present || (cd ${{ inputs.project_path }} && npm ci && npm run test --if-present)
+      shell: bash
