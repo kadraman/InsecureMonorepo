@@ -13,9 +13,6 @@ inputs:
 runs:
   using: "composite"
   steps:
-    - name: Checkout
-      uses: actions/checkout@v4
-
     - name: Setup Node
       uses: actions/setup-node@v3
       with:
@@ -34,15 +31,12 @@ runs:
           ${{ runner.os }}-npm-
 
     - name: Install dependencies (root)
-      shell: bash
       run: npm ci
 
     - name: Build (workspace preferred, fallback)
-      shell: bash
       run: |
         npm --workspace=${{ inputs.project_path }} run build --if-present || (cd ${{ inputs.project_path }} && npm ci && npm run build --if-present)
 
     - name: Test (workspace preferred, fallback)
-      shell: bash
       run: |
         npm --workspace=${{ inputs.project_path }} run test --if-present || (cd ${{ inputs.project_path }} && npm ci && npm run test --if-present)

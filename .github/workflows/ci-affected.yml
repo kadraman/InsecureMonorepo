@@ -60,6 +60,9 @@ jobs:
     if: |
       needs.filter.outputs.packages_auth == 'true' || needs.filter.outputs.root == 'true' || github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master'
     steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
       - name: Run CI composite action for packages/auth
         uses: ./.github/actions/ci-project-action
         with:
@@ -73,6 +76,9 @@ jobs:
     if: |
       needs.filter.outputs.packages_config == 'true' || needs.filter.outputs.root == 'true' || github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master'
     steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
       - name: Run CI composite action for packages/config
         uses: ./.github/actions/ci-project-action
         with:
@@ -86,6 +92,9 @@ jobs:
     if: |
       needs.filter.outputs.packages_logging == 'true' || needs.filter.outputs.root == 'true' || github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master'
     steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
       - name: Run CI composite action for packages/logging
         uses: ./.github/actions/ci-project-action
         with:
@@ -99,6 +108,9 @@ jobs:
     if: |
       needs.filter.outputs.services_api_gateway == 'true' || needs.filter.outputs.root == 'true' || github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master'
     steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
       - name: Run CI composite action for services/api-gateway
         uses: ./.github/actions/ci-project-action
         with:
@@ -112,6 +124,9 @@ jobs:
     if: |
       needs.filter.outputs.services_orders == 'true' || needs.filter.outputs.root == 'true' || github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master'
     steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
       - name: Run CI composite action for services/orders-service
         uses: ./.github/actions/ci-project-action
         with:
@@ -125,6 +140,9 @@ jobs:
     if: |
       needs.filter.outputs.services_products == 'true' || needs.filter.outputs.root == 'true' || github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master'
     steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
       - name: Run CI composite action for services/products-service
         uses: ./.github/actions/ci-project-action
         with:
@@ -138,6 +156,9 @@ jobs:
     if: |
       needs.filter.outputs.services_users == 'true' || needs.filter.outputs.root == 'true' || github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master'
     steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
       - name: Run CI composite action for services/users-service
         uses: ./.github/actions/ci-project-action
         with:
