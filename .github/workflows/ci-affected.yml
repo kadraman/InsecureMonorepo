@@ -1,0 +1,84 @@
+name: "CI - Affected projects"
+
+on:
+  push:
+    # Don't run the affected-project workflow for direct pushes to main/master to avoid duplicate full CI
+    branches-ignore: ["main", "master"]
+    paths:
+      - 'services/**'
+      - 'packages/**'
+      - '.github/workflows/**'
+  pull_request:
+    paths:
+      - 'services/**'
+      - 'packages/**'
+      - '.github/workflows/**'
+
+jobs:
+  detect-changed:
+    name: Detect changed projects
+    runs-on: ubuntu-latest
+    outputs:
+      projects: ${{ steps.set-projects.outputs.projects }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Get changed files and projects
+        id: set-projects
+        run: |
+          echo "Detecting changed files for event ${GITHUB_EVENT_NAME}"
+          if [ "${GITHUB_EVENT_NAME}" = "pull_request" ]; then
+            RANGE="${{ github.event.pull_request.base.sha }}..${{ github.event.pull_request.head.sha }}"
+          else
+            if [ -n "${{ github.before }}" ]; then
+              RANGE="${{ github.before }}..${{ github.sha }}"
+            else
+              RANGE="$(git rev-parse HEAD)^..$(git rev-parse HEAD)"
+            fi
+          fi
+          echo "Using range: $RANGE"
+          files=$(git diff --name-only "$RANGE" || true)
+          echo "Changed files:\n$files"
+
+          # Build array of changed projects
+          projects_arr=()
+          for dir in services/* packages/*; do
+            if [ -d "$dir" ]; then
+              # match files that start with the dir path
+              if echo "$files" | grep -E "^${dir}/" >/dev/null 2>&1; then
+                projects_arr+=("$dir")
+              fi
+            fi
+          done
+
+          # If no specific project changes, default to all projects (safe fallback)
+          if [ ${#projects_arr[@]} -eq 0 ]; then
+            echo "No project-specific changes detected; defaulting to all projects"
+            for dir in services/* packages/*; do
+              [ -d "$dir" ] && projects_arr+=("$dir")
+            done
+          fi
+
+          # Convert to JSON array
+          projects_json=$(printf '%s\n' "${projects_arr[@]}" | python3 -c 'import sys,json; print(json.dumps([l for l in sys.stdin.read().splitlines() if l]))')
+          echo "Projects JSON: $projects_json"
+          echo "projects=$projects_json" >> $GITHUB_OUTPUT
+
+  run-projects:
+    name: Run CI for each affected project
+    needs: detect-changed
+    # Use a matrix so each project runs in parallel
+    strategy:
+      fail-fast: false
+      matrix:
+        project: ${{ fromJson(needs.detect-changed.outputs.projects) }}
+    # Call the reusable workflow for each project in the matrix
+    uses: ./.github/workflows/ci-project-reusable.yml
+    with:
+      project_path: ${{ matrix.project }}
+      node-version: '18'
+      # Let the reusable workflow pick its runner, callers may override; keep ubuntu default here
+      runner: 'ubuntu-latest'
