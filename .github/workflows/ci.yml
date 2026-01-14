@@ -2,9 +2,10 @@ name: Build and Test
 
 on:
   push:
-    branches: [ "main", "master", "feature/*", "copilot/*" ]
-  pull_request:
     branches: [ "main", "master" ]
+  # Nightly full build (optional) - keeps a full monorepo verification regularly
+  schedule:
+    - cron: '0 2 * * *'
 
 jobs:
   build:

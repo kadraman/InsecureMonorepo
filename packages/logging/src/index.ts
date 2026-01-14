@@ -8,6 +8,19 @@ export class Logger {
   private logger: winston.Logger;
 
   constructor(serviceName: string) {
+    const transports: winston.transport[] = [new winston.transports.Console()];
+
+    // Avoid file transport in test environment (prevents open file handles during Jest)
+    if (process.env.NODE_ENV !== 'test') {
+      // ensure log directory exists
+      try {
+        fs.mkdirSync(path.resolve('./logs'), { recursive: true });
+      } catch (e) {
+        // ignore
+      }
+      transports.push(new winston.transports.File({ filename: 'app.log' }));
+    }
+
     this.logger = winston.createLogger({
       level: 'info',
       format: winston.format.combine(
@@ -17,10 +30,7 @@ export class Logger {
           return `${info.timestamp} [${serviceName}] ${info.level}: ${info.message}`;
         })
       ),
-      transports: [
-        new winston.transports.Console(),
-        new winston.transports.File({ filename: 'app.log' })
-      ]
+      transports
     });
   }
 

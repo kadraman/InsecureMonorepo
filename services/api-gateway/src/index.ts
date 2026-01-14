@@ -6,11 +6,22 @@ import Logger from '@packages/logging';
 import ConfigManager from '@packages/config';
 import AuthService from '@packages/auth';
 import axios from 'axios';
+import fs from 'fs';
+import path from 'path';
 
 const app = express();
 const logger = new Logger('api-gateway');
 const configManager = new ConfigManager();
 const authService = new AuthService();
+
+// Ensure upload directory exists to avoid ENOENT during tests
+const UPLOAD_DIR = '/tmp/uploads';
+try {
+  fs.mkdirSync(UPLOAD_DIR, { recursive: true });
+  logger.info(`Ensured upload dir: ${UPLOAD_DIR}`);
+} catch (err: any) {
+  logger.error(`Failed to create upload dir: ${err.message}`);
+}
 
 // Vulnerability: Weak rate limiting
 const limiter = rateLimit({
@@ -193,15 +204,21 @@ app.get('/api/debug', (req: Request, res: Response) => {
 app.post('/api/upload', (req: Request, res: Response) => {
   const { filename, content } = req.body;
   
-  // Vulnerability: No file type validation
-  // Vulnerability: Path traversal possible
-  const fs = require('fs');
-  const path = require('path');
-  
-  const uploadPath = path.join('/tmp/uploads', filename);
-  
-  fs.writeFileSync(uploadPath, content);
-  res.json({ message: 'File uploaded', path: uploadPath });
+  // Ensure upload directory exists at write time (defensive)
+  try {
+    const safeUploadDir = UPLOAD_DIR;
+    fs.mkdirSync(safeUploadDir, { recursive: true });
+
+    // Vulnerability: No file type validation
+    // Vulnerability: Path traversal possible
+    const uploadPath = path.join(safeUploadDir, filename);
+
+    fs.writeFileSync(uploadPath, content);
+    res.json({ message: 'File uploaded', path: uploadPath });
+  } catch (err: any) {
+    logger.error(`Upload error: ${err.message}`);
+    res.status(500).json({ error: err.message });
+  }
 });
 
 // Error handler
@@ -216,9 +233,21 @@ app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
 
 const PORT = process.env.PORT || 3000;
 
-app.listen(PORT, () => {
-  logger.info(`API Gateway running on port ${PORT}`);
-  console.log(`API Gateway running on http://localhost:${PORT}`);
-});
+// Start server only when run directly to avoid leaving handles during tests
+// Also avoid starting when running under Jest (NODE_ENV=test)
+if (require.main === module && process.env.NODE_ENV !== 'test') {
+  const server = app.listen(PORT, () => {
+    logger.info(`API Gateway running on port ${PORT}`);
+    console.log(`API Gateway running on http://localhost:${PORT}`);
+  });
+
+  // Graceful shutdown
+  const shutdown = () => {
+    logger.info('Shutting down');
+    server.close(() => process.exit(0));
+  };
+  process.on('SIGINT', shutdown);
+  process.on('SIGTERM', shutdown);
+}
 
 export default app;
